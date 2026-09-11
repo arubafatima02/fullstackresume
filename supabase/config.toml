@@ -1,0 +1,7 @@
+[functions.admin-auth]
+verify_jwt = false
+entrypoint = "./functions/admin-auth/index.ts"
+
+[functions.groq-chat]
+verify_jwt = false
+entrypoint = "./functions/groq-chat/index.ts"
