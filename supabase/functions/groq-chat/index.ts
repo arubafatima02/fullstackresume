@@ -4,7 +4,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const GROQ_API_KEY = Deno.env.get("GROQ_API_KEY") || "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";
+const GROQ_API_KEY = Deno.env.get("GROQ_API_KEY");
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 const SYSTEM_PROMPT =
@@ -16,6 +16,13 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    if (!GROQ_API_KEY) {
+      return new Response(
+        JSON.stringify({ error: "AI service is not configured" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const { messages } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {

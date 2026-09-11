@@ -53,6 +53,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
     setError(null);
     try {
       const supabase = getSupabase();
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error: err } = await supabase
         .from('projects')
         .select('*')
@@ -101,6 +102,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
 
     try {
       const supabase = getSupabase();
+      if (!supabase) throw new Error('Supabase is not configured');
       if (editingId) {
         const { error: err } = await supabase.from('projects').update(payload).eq('id', editingId);
         if (err) throw err;
@@ -123,6 +125,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
     if (!confirm('Delete this entry permanently?')) return;
     try {
       const supabase = getSupabase();
+      if (!supabase) throw new Error('Supabase is not configured');
       const { error: err } = await supabase.from('projects').delete().eq('id', id);
       if (err) throw err;
       setItems(items.filter((i) => i.id !== id));
