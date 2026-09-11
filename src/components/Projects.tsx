@@ -27,6 +27,7 @@ export default function Projects() {
     setError(null);
     try {
       const supabase = getSupabase();
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error: err } = await supabase
         .from('projects')
         .select('*')
@@ -44,6 +45,7 @@ export default function Projects() {
     if (!confirm('Delete this entry? This cannot be undone.')) return;
     try {
       const supabase = getSupabase();
+      if (!supabase) throw new Error('Supabase is not configured');
       const { error: err } = await supabase.from('projects').delete().eq('id', id);
       if (err) throw err;
       setProjects(projects.filter((p) => p.id !== id));

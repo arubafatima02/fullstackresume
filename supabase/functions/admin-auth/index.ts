@@ -4,8 +4,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const ADMIN_EMAIL = "arubafatima02@gmail.com";
-const ADMIN_PASSWORD = "heyaroobi76";
+const ADMIN_EMAIL = Deno.env.get("ADMIN_EMAIL");
+const ADMIN_PASSWORD = Deno.env.get("ADMIN_PASSWORD");
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -13,6 +13,13 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Admin login is not configured" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const { email, password } = await req.json();
 
     if (!email || !password) {
@@ -22,7 +29,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (email.trim().toLowerCase() === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    if (email.trim().toLowerCase() === ADMIN_EMAIL.trim().toLowerCase() && password === ADMIN_PASSWORD) {
       return new Response(
         JSON.stringify({ success: true, token: btoa(`${email}:${Date.now()}`) }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }

@@ -28,6 +28,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const supabase = getSupabase();
 
+    try {
+      const admin = sessionStorage.getItem(ADMIN_KEY);
+      if (admin === 'true') setIsAdmin(true);
+    } catch {
+      // ignore
+    }
+
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setUser(data.session?.user ?? null);
@@ -39,13 +51,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(sess?.user ?? null);
     });
 
-    try {
-      const admin = sessionStorage.getItem(ADMIN_KEY);
-      if (admin === 'true') setIsAdmin(true);
-    } catch {
-      // ignore
-    }
-
     return () => {
       sub.subscription.unsubscribe();
     };
@@ -53,6 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = useCallback(async () => {
     const supabase = getSupabase();
+    if (!supabase) return;
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: window.location.origin },
@@ -61,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async () => {
     const supabase = getSupabase();
+    if (!supabase) return;
     await supabase.auth.signOut();
     setSession(null);
     setUser(null);
