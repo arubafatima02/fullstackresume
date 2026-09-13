@@ -29,7 +29,7 @@ const EMPTY_FORM: FormData = {
 type AdminTab = 'content' | 'config';
 
 export default function AdminPanel({ onBack }: AdminPanelProps) {
-  const { adminLogout, session, signInWithGoogle, user } = useAuth();
+  const { adminLogout, user } = useAuth();
   const [tab, setTab] = useState<AdminTab>('content');
   const [items, setItems] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -113,7 +113,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
       setEditingId(null);
       await loadItems();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Save failed. Make sure you are logged in with Google.');
+      setError(err instanceof Error ? err.message : 'Failed to save entry.');
     } finally {
       setSaving(false);
     }
@@ -163,15 +163,8 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
             <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>Full CRUD access to ARB TECH content</p>
           </div>
           <div className="flex items-center gap-3">
-            {!session && (
-              <button onClick={signInWithGoogle} className="btn-ghost flex items-center gap-2 text-xs">
-                <i className="fa-brands fa-google"></i>
-                Login with Google
-              </button>
-            )}
             {user && (
               <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                <i className="fa-brands fa-google mr-1 accent-text"></i>
                 {user.email}
               </span>
             )}
@@ -201,16 +194,6 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
             API Config
           </button>
         </div>
-
-        {/* Auth notice */}
-        {!session && tab === 'content' && (
-          <div className="elevated-card p-4 mb-6" style={{ borderLeft: '3px solid var(--primary-color)' }}>
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-              <span className="accent-text font-medium">Note:</span> To add, edit, or delete entries, also log in with Google.
-              Admin access grants panel entry; Google login grants database write permissions.
-            </p>
-          </div>
-        )}
 
         {error && (
           <div className="elevated-card p-4 mb-6">
