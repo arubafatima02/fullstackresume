@@ -12,6 +12,7 @@ import GameModal from '@/components/GameModal';
 import AskAroobaAI from '@/components/AskAroobaAI';
 import AdminLogin from '@/components/AdminLogin';
 import AdminPanel from '@/components/AdminPanel';
+import AudioPlayer from '@/components/AudioPlayer'; // 1. Import AudioPlayer
 import type { Page, GameType } from '@/lib/types';
 
 function AppContent() {
@@ -60,6 +61,9 @@ function AppContent() {
       )}
 
       <Footer />
+
+      {/* 2. Audio Player Component */}
+      <AudioPlayer theme="dark" />
 
       {/* Modals */}
       {settingsOpen && (
